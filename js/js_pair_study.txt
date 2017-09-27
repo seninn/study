@@ -1,0 +1,617 @@
+js-составный_данный
+-----------------------------19
+
+Рассмотренный в уроке способ создания пар, не является единственно возможным, даже если мы говорим только про реализацию на функциях.
+pairs.js
+Напишите и экспортируйте функции car и cdr, основываясь на том, как реализована функция cons:
+
+const cons = (x, y) => f => f(x, y);
+Подсказки
+Все дело в хитрых функциях, которые вызывают другие функции и передают в них функции ;)
+Задача проще чем кажется, каждая функция это одна короткая строчка.
+
+		Сам не решил
+		
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+ 		const cons = (x, y) => f => f(x, y);
+		car=cons=>cons((x,y)=>x);
+		cdr=cons=>cons((x,y)=>y);
+
+
+
+------------------------------16
+		Во многих языках программирования существует интересная функция flip. Ее необычность заключается в том, что единственная цель этой функции это преобразовать другую функцию так, чтобы порядок ее аргументов был обратным. Например, у нас может быть функция pow, которая возводит первый аргумент в степень второго. flip вернет нам новую функцию, у которой первый аргумент это степень, а второй это число, которое нужно возводить в эту степень.
+		Эта функция бывает очень полезна при активной работе с функциями высшего порядка, она часто упрощает возможность комбинировать функции между собой.
+		solution.js
+		Реализуйте и экспортируйте по умолчанию функцию flip. Данная версия flip работает только с функциями от двух аргументов.
+		// subtraction
+		const sub = (a, b) => a - b;
+		const reverseSub = flip(sub);
+
+		sub(5, 3); // 2
+		reverseSub(5, 3); // -2
+
+		// exponentiation
+		const wop = flip(Math.pow);
+
+		Math.pow(1, 2); // 1
+		wop(1, 2); // 2
+
+		Math.pow(3, 2); // 9
+		wop(3, 2); // 8
+		
+		
+		
+		
+		3.верное
+			// BEGIN (write your solution here)
+			const flip=f=>(a,b)=>f(b,a);
+			export default flip;
+			// END
+		
+		
+		2.Решение работает но оно не верно
+		const flip=(a,b)=>Math.pow(b,a);
+		console.log(flip(3,2));
+		
+		1.решение работает но оно не верное
+		const flip=(a,b)=>Math.pow(b,a);
+		const wop=(a,b)=>flip(a,b);
+		console.log(wop(3,2));
+		
+		
+		
+		\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+		
+		// BEGIN
+		const flip = f => (a, b) => f(b, a);
+		export default flip;
+		// END
+
+----------------------------------------15
+	замыкание 	из тестов
+     вопрос 6
+		Ниже определена функция getIncreasedNumFunction, которая принимает на вход значение множителя и возвращает функцию num => num * multiplier. Возвращаемая функция работает следующим образом: она принимает на вход число num и возвращает произведение этого числа на множитель multiplier.
+
+		const getIncreasedNumFunction = multiplier => num => num * multiplier;
+
+		// Function === num => num * 3
+		getIncreasedNumFunction(3);
+		// (num => num * 3)(15) ---> 15 * 3 === 45
+		getIncreasedNumFunction(3)(15);
+
+		// Function === num => num * 7
+		getIncreasedNumFunction(7);
+		// Function(4) === (num => num * 7)(4) ---> 4 * 7 === 28
+		getIncreasedNumFunction(7)(4);
+		// аналогично
+		// Function === num => num * 7
+		const getIncreasedBySevenTimes = getIncreasedNumFunction(7);
+		// 4 * 7 === 28
+		getIncreasedBySevenTimes(4);
+
+	вопрос 11
+	Отметьте константы, содержащие функцию высшего порядка (higher-order function):
+
+				const multiplication = a => b => c => a * b * c;
+				const multiA = multiplication(10); // Function === b => c => 10 * b * c;
+				const multiB = multiA(20); // Function === c => 10 * 20 * c;
+				const multiC = multiB(30); // 10 * 20 * 30 === 6000
+				(Нужно выбрать все правильные ответы)
+
+			V	multiA
+				multiB
+			V	multiplication
+				multiC
+
+-------------------------------------14
+замыкание ф-ции первого и высшего порядка
+
+
+				Функции
+				Раскрою вам небольшой секрет. С самого начала наших курсов мы определяли функции как константы, вот так:
+
+				const sum = (a, b) => a + b;
+				sum(5, 3); // 8
+				Этим мы подчеркивали то, что функции, на самом деле, являются такими же данными как и все остальное. Например, мы можем создать еще одну константу и "привязать" ее к уже созданной функции:
+
+				const f = () => console.log("don't be evil");
+				const z = f;
+				z(); // don't be evil
+				Как видно из примера выше, не имеет никакого значения, что является значением константы, примитивное значение или функция, работают они одинаково для всех данных.
+
+				Кстати, имя для функции не обязательно, мы можем определить функцию и тут же ее вызвать:
+
+				((message) => console.log(message))("don't be evil");
+				// don't be evil
+				Функции как аргументы
+				const f = g => g('side effects');
+				Выше определена функция f, которая принимает на вход параметр g и вызывает его как функцию. Это значит что g должен быть функцией (иначе возникнет ошибка).
+
+				f(console.log); // g = console.log
+				// Эквивалентно: console.log('side effects')
+				// Результат: side effects
+				Чуть более сложный пример:
+
+				const func = f => f(n => n ** 2);
+				Так как определение функции это выражение, то мы можем его использовать абсолютно везде где ожидается выражение, в данном случае, мы определяем функцию в том же месте где передаем ее в другую функцию. Код выше можно записать так:
+
+				const square = n => n ** 2;
+				const func = f => f(square);
+				Функции как возврат
+				Определение вложенных функций является правоассоциативной операцией:
+
+				const f = x => y => x + y;
+				Тоже самое со скобками:
+
+				const f = x => (y => (x + y));
+				Тоже самое в более подробном виде:
+
+				const f = (x) => {
+				  const z = y => (x + y);
+				  return z;
+				}
+				В примере выше, определена функция f, которая принимает на вход x и возвращает функцию y => (x + y). Попутно происходит замыкание константы x.
+
+				Разложим поэтапно:
+
+				const f = x => (y => (x + y));
+				const g = f(5); // x = 5
+				// Эквивалентно: const g = y => 5 + y
+				g(10); // y = 10
+				// Результат: 5 + 10 = 15
+				Главное что нужно понимать, это то что конструкция () => {} является неделимой и рассматривается всегда как единый блок.
+--------------------------------------13
+			rectangles.js
+			Реализуйте абстракцию (набор функций) для работы с прямоугольниками, стороны которого всегда параллельны осям. При такой постановке, достаточно знать только три параметра для однозначного задания прямоугольника на плоскости: координаты левой-верхней точки, ширину и высоту. Зная их, мы всегда можем построить прямоугольник одним единственным способом.
+
+			  |
+			4 |    точка   ширина
+			  |       *-------------
+			3 |       |            |
+			  |       |            | высота
+			2 |       |            |
+			  |       --------------
+			1 |
+			  |
+			  |---------------------------
+			0    1   2   3   4   5   6   7
+			Основной интерфейс:
+
+			makeRectangle (конструктор) - создает прямоугольник. Принимает параметры: левую-верхнюю точку, ширину и высоту.
+			Селекторы startPoint, width и height
+			Вспомогательные функции для выполнения расчетов:
+
+			square - возвращает площадь прямоугольника (a * b).
+			perimeter - возвращает периметр прямоугольника (2 * (a + b)).
+			containsTheOrigin - проверяет, принадлежит ли центр координат прямоугольнику (не лежит на границе прямоугольника, а находится внутри). Чтобы в этом убедиться, достаточно проверить, что все точки прямоугольника лежат в разных квадрантах.
+			Так как это интерфейсные функции, то они должны быть экспортированы. Если этого не сделать, система модулей js не даст ими воспользоваться.
+
+			// Создание прямоугольника:
+			// p - левая верхняя точка
+			// 4 - ширина
+			// 5 - высота
+			//
+			// p    4
+			// -----------
+			// |         |
+			// |         | 5
+			// |         |
+			// -----------
+			const p = makePoint(0, 1);
+			const rectangle = makeRectangle(p, 4, 5);
+
+			// Вычисление площади прямоугольника
+			square(rectangle); // 20;
+
+			perimeter(rectangle); // 18
+			containsTheOrigin(rectangle); // false
+
+			const rectangle02 = makeRectangle(makePoint(-4, 3), 5, 4);
+			containsTheOrigin(rectangle02); // true
+
+			containsTheOrigin(makeRectangle(makePoint(-4, 4), 5, 2)); // false
+			containsTheOrigin(makeRectangle(makePoint(-4, 3), 2, 8)); // false
+
+
+
+
+			// eslint-disable-next-line
+			import { makePoint, getX, getY, quadrant, toString as pointToString } from 'hexlet-points';
+			// eslint-disable-next-line
+			import { cons, car, cdr, toString as pairToString } from 'hexlet-pairs';
+
+			// BEGIN (write your solution here)
+			const makeRectangle=(point,a,b)=>{
+			  const startPoint=makePoint(car(point),cdr(point));
+			  const param=cons(a/1,b/1);
+			  return cons(startPoint,param);
+			};
+			//const p=cons(3,5);
+			//const rectangle=makeRectangle(p,4,5);
+
+			const startPoint=rectangle=>car(rectangle);
+			const width=rectangle=>getX(cdr(rectangle));
+			const height=rectangle=>getY(cdr(rectangle));
+
+			const square=rectangle=>width(rectangle)*height(rectangle);
+			const perimeter=rectangle=>2*(width(rectangle)+height(rectangle));
+
+			const containsTheOrigin=rectangle=>{
+			  const x1=getX(startPoint(rectangle));
+			  const y1=getY(startPoint(rectangle));  
+			  // const x1=car(car(rectangle));
+			  // const y1=cdr(car(rectangle));
+			  const w=width(rectangle);
+			  const h=height(rectangle);
+			  console.log('x='+x1+'y='+y1+'width='+w+'height='+h);
+			  if(x1<0&&y1>0){
+				if((x1+w)>0 && (y1-h)<0){
+				  console.log('попало');
+				  return true;
+				  }
+			  return false;
+				}
+			  return false;
+			};
+
+
+			export {makeRectangle,startPoint,width,height,square,perimeter,containsTheOrigin};
+			// END
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+			// BEGIN
+			export const makeRectangle = (point, width, height) => cons(point, cons(width, height));
+
+			export const startPoint = rectangle => car(rectangle);
+			export const height = rectangle => cdr(cdr(rectangle));
+			export const width = rectangle => car(cdr(rectangle));
+
+			export const square = rectangle => height(rectangle) * width(rectangle);
+			export const perimeter = rectangle => 2 * (height(rectangle) + width(rectangle));
+
+			export const containsTheOrigin = (rectangle) => {
+			  const point1 = startPoint(rectangle);
+			  const point2 = makePoint(getX(point1) + width(rectangle), getY(point1) - height(rectangle));
+
+			  return quadrant(point1) === 2 && quadrant(point2) === 4;
+			};
+			// END
+
+
+
+
+
+
+------------------------------------- 10
+
+
+
+		Рассмотрим задачу представления отрезков на прямой плоскости. Каждый отрезок представляется как пара точек: начало и конец. Он может быть быть описан, например, так: [(1, 3), (5, 4)]. Это означает, что наш отрезок начинается в точке (1, 3) и заканчивается в точке (5, 4) координатной плоскости.
+
+		В этом задании необходимо разработать абстракцию для работы с отрезками (англ. сегмент), которая позволяет строить их из точек, извлекать из отрезков составные части (начало или конец сегмента), а так же получать текстовое представление сегмента.
+
+		Абстракция заключается в том, что конкретное представление сегмента определяется внутри функций, описывающих работу с отрезками и зависит от создателя библиотеки. С точки зрения клиента библиотеки (кода который ее вызывает), не важно как конкретно устроен сегмент, важно только то, что есть некоторый набор функций (абстракция), позволяющий работать с ним.
+
+		segments.js
+		Определите и экспортируйте следующие функции:
+
+		Конструктор makeSegment, который принимает на вход две точки и возвращает сегмент. Первая точка это начало сегмента, вторая это конец.
+		Селекторы startSegment и endSegment, которые извлекают из сегмента его начальную и конечную точку соответственно.
+		Вспомогательную функцию segmentToString, которая возвращает текстовое представление сегмента: [(1, 2), (-4, -2)].
+		Функцию midpointSegment, которая находит точку на середине отрезка по формулaм: x = (x1 + x2) / 2 и y = (y1 + y2) / 2.
+		import * as points from 'hexlet-points';
+
+		// не важно, чем является segment с точки зрения реализации, главное, что с ним можно
+		// работать используя функции для работы с сегментами
+		const segment = makeSegment(points.makePoint(1, 2), points.makePoint(-4, -2));
+		console.log(toStr(segment)); // [(1, 2), (-4, -2)]
+
+		const point1 = startSegment(segment); // (1, 2)
+		console.log(points.toString(point1);
+
+		const point2 = endSegment(segment);
+		console.log(points.toString(point2)); // (-4, -2)
+
+		points.toString(startSegment(segment)) == points.toString(makePoint(1, 2)); // true
+
+		points.toString(midpointSegment(segment)); // (-1.5, 0)
+		Поскольку на текущий момент мы знакомы только с парами для работы с составными данными, то и реализация сегментов должна быть основана на них.
+
+
+				// eslint-disable-next-line
+				import { makePoint, getX, getY, toString as pointToString } from 'hexlet-points';
+				// eslint-disable-next-line
+				import { cons, car, cdr } from 'hexlet-pairs';
+
+				// BEGIN (write your solution here)
+				  const makeSegment=(point1,point2)=>cons(point1,point2);
+				  const startSegment=segment=>cons(car(car(segment)),cdr(car(segment)));
+				  const endSegment=segment=>cons(car(cdr(segment)),cdr(cdr(segment)));
+				  const segmentToString=segment=>`[${pointToString(car(segment))}, ${pointToString(cdr(segment))}]`;
+				  const midpointSegment=segment=>{
+					let x=(car(car(segment))+car(cdr(segment)))/2;
+					let y=(cdr(car(segment))+cdr(cdr(segment)))/2;    
+					return cons(x,y);
+				  };
+				// END
+				export {makeSegment,startSegment,endSegment,segmentToString,midpointSegment};
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+				segments.js
+				// BEGIN
+				export const makeSegment = (point1, point2) => cons(point1, point2);
+
+				export const startSegment = segment => car(segment);
+
+				export const endSegment = segment => cdr(segment);
+
+				export const segmentToString = segment =>
+				  `[${pointToString(startSegment(segment))}, ${pointToString(endSegment(segment))}]`;
+
+				export const midpointSegment = (segment) => {
+				  const startPoint = startSegment(segment);
+				  const endPoint = endSegment(segment);
+				  const x = (getX(startPoint) + getX(endPoint)) / 2;
+				  const y = (getY(startPoint) + getY(endPoint)) / 2;
+
+				  return makePoint(x, y);
+				};
+				// END
+
+--------------------------9
+		Какие выводы можно сделать глядя на этот код?
+
+		const makePoint = (x, y) => cons(x, y);
+		const getMiddlePoint = /* тут реализация */;
+
+		const point1 = makePoint(3, 5);
+		const point2 = cons(10, -1);
+
+		const point3 = getMiddlePoint(point1, point2);
+		console.log(car(point3), cdr(point3));
+		(Нужно выбрать все правильные ответы)
+
+		(верный ответ - первые три)
+		V Если реализация точек поменяется с пар на, например, строки (а так можно сделать), то код выше придется переписывать, так как он опирается на то что точки сделаны из пар
+		V Вторая точка создается в обход конструктора
+		V В коде происходит нарушение абстракции даже несмотря на наличие конструктора. Извлечение координат из точки происходит на основе знания структуры точки, без использования селекторов.
+		 Перед нами пример хорошей абстракции
+
+--------------------------7
+			В этом задании мы немного потренируемся работать с парами. Без фанатизма и по шагам.
+
+			Шаг 1 - reversePair.js
+			Реализуйте функцию reversePair, которая принимает на вход пару и возвращает другую, в которой значения переставлены местами:
+
+			import { cons, car, cdr, toString } from 'hexlet-pairs';
+
+			const pair = cons('one', 'two');
+			console.log(toString(reversePair(pair))); // ('two', 'one')
+			Шаг 2 - sumOfPairs.js
+			Реализуйте функцию sumOfPairs, которая принимает на вход две пары и возвращает новую пару, в элементах которой находятся суммы элементов из исходных пар:
+
+			import { cons, car, cdr, toString } from 'hexlet-pairs';
+
+			const pair1 = cons(4, 10);
+			const pair2 = cons(100, 0);
+			console.log(toString(sumOfPairs(pair1, pair2))); // (104, 10)
+			Шаг 3 - findPrimitiveBox.js
+			Однажды вы сидели дома, когда курьер Василий принес вам коробку. С коробкой шла записка следующего содержания:
+
+			Коробка состоит из двух отсеков, в одном из которых пусто, а в другом лежит еще одна коробка, в которой также два отсека и точно также один отсек пустой, а в другом - коробка. Коробки могут быть вложены друг в друга сколько угодно раз. Вам нужно добраться до коробки, внутри которой нет вложенной коробки, и отдать ее курьеру.
+
+			Подчеркну, что во всех коробках, кроме той последней, в одном отсеке пусто, а в другом - всегда коробка, но никогда не две коробки одновременно и никогда не две пустоты. Сами отсеки при этом могут меняться, то есть в одной коробке пустым отсеком может быть первый, а в другой - последний.
+
+			Реализуйте рекурсивную функцию findPrimitiveBox, которая принимает на вход "коробку" (пару), находит внутри нее пару без вложенных пар (как описано выше) и возвращает наружу.
+
+			import { cons, car, cdr, toString } from 'hexlet-pairs';
+
+			const pair = cons(
+			  null,
+			  cons('one', 'two'),
+			);
+			toString(findPrimitiveBox(pair)); // ('one', 'two')
+
+			const pair2 = cons(
+			  cons(null, cons(1, 5)),
+			  null,
+			);
+			toString(findPrimitiveBox(pair2)); // (1, 5)
+			Подсказки
+			Выполняйте практику строго по порядку (по шагам): от простых упражнений к более сложным.
+			Функция isPair из библиотеки hexlet-pairs проверяет, является ли переданный ей параметр парой. Более подробное описание функции смотрите в документации библиотеки (файл hexlet-pairs.md в каталоге docs).
+			Функцию toString из библиотеки hexlet-pairs можно использовать (при необходимости) для отладки решений.
+
+
+					reversePair.js
+					import { cons, car, cdr, toString } from 'hexlet-pairs'; // eslint-disable-line
+					// BEGIN (write your solution here)
+					const pair = cons('one', 'two');
+					const reversePair=pair=>{
+					  const newpair=cons(cdr(pair),car(pair));
+					  return newpair;
+					};
+					// END
+					export default reversePair;
+					
+					sumOfPairs.js
+					import { cons, car, cdr, toString } from 'hexlet-pairs'; // eslint-disable-line
+					// BEGIN (write your solution here)
+					const pair1 = cons(4, 10);
+					const pair2 = cons(100, 0);
+					const sumOfPairs=(pair1,pair2)=>{
+					  const pair=cons(car(pair1)+car(pair2),cdr(pair1)+cdr(pair2));
+					  return pair;
+					};
+					// END
+					
+					
+						import { car, cdr, isPair, toString } from 'hexlet-pairs'; // eslint-disable-line
+
+						// BEGIN (write your solution here)
+						  const findPrimitiveBox=(pair)=>{
+							
+							if(car(pair)===null){
+							  if(isPair(cdr(pair))){
+								console.log('вход 1');
+								return findPrimitiveBox(cdr(pair));
+							  }
+									  console.log('вход 2');
+								return cdr(pair);
+							}
+							  if(isPair(car(pair))){
+										console.log('вход 3');
+								return findPrimitiveBox(car(pair));
+							  }
+									  console.log('вход 4');
+							  return pair;
+						  };
+						// END
+						export default findPrimitiveBox;
+
+
+						//////////////////////
+						findPrimitiveBox.js
+						// BEGIN
+						const findPrimitiveBox = (pair) => {
+						  const first = car(pair);
+						  const last = cdr(pair);
+
+						  if (!isPair(first) && !isPair(last)) {
+							return pair;
+						  }
+
+						  const next = isPair(first) ? first : last;
+						  return findPrimitiveBox(next);
+						};
+						// END
+					
+					
+
+--------------------------5
+			import { cons, car, cdr, toString } from 'hexlet-pairs';
+
+			const pair = cons('first', 'second');
+			console.log(car(pair));
+			console.log(cdr(pair));
+
+			console.log(pair); // don't do it
+			console.log(toString(pair)); 
+
+			Пары
+			Вероятно вы заметили что пары неизменяемы. Нельзя, просто так, взять и поменять пару, можно только создать новую на основе предыдущей. По началу, такой способ программирования может показаться необычным и даже сложным (так как надо перестроить мозг), но чем дальше вы будете продвигаться по курсам, тем больше он вам начнет нравится и вы увидите, как часто упрощается код и его отладка в отсутствии изменяемости.
+
+			Ошибки
+			Работая с парами, очень легко допустить ошибку, которая будет выглядеть так:
+
+			Argument must be a pair, but it was ...
+
+			Так вот, если по какой-то причине в селекторы произошла передача не пары (парой является только то что создано с помощью cons), то результатом будет как раз ошибка, приведенная выше. Проверить это очень легко:
+
+			const pair = 3;
+			car(pair); // Argument must be a pair, but it was '3'
+			или, если, к примеру, передать селектору строку вместо пары:
+
+			const pair = 'hello';
+			car(pair); // Argument must be a pair, but it was 'hello'
+
+
+
+_______________________4
+			points.js
+			Реализуйте и экспортируйте следующие функции для работы с точками:
+
+			quadrant - функция, которая вычисляет квадрант, в котором находится точка. Ниже приведена схема, показывающая номера квадрантов на плоскости.
+					+
+				  2 | 1
+					|
+			+----------------+
+					|
+				  3 | 4
+					+
+			const point = makePoint(1, 5);
+			quadrant(point); // 1
+			quadrant(makePoint(3, -3)); // 4
+			Если точка не принадлежит ни одному квадранту, то функция должна возвращать null.
+
+			symmetricalPoint - функция, возвращающая новую точку, симметричную относительно начала координат. Такая симметричность означает, что меняются знаки у x и y.
+			symmetricalPoint(makePoint(1, 5)); // makePoint(-1, -5)
+			distance - функция, вычисляющая расстояние между точками по формуле: d = sqrt((x2−x1)^2+(y2−y1)^2)
+			distance(makePoint(-2, -3), makePoint(-4, 4)); // ≈ 7.28
+
+
+
+
+
+			import { makePoint, getX, getY } from 'hexlet-points'; // eslint-disable-line
+
+			// BEGIN (write your solution here)
+			const symmetricalPoint=(point)=>{
+			  return makePoint(-getX(point),-(getY(point)));
+			};
+			const quadrant=(point)=>{
+			  if(getX(point)===0||getY(point)===0){return null;}
+			  if (getX(point)>0){
+				if(getY(point)>0){return 1;}
+				return 4;
+				}
+			  if(getY(point)>0){return 2}
+			  return 3;
+			};
+			const distance=(point1,point2)=>{
+			  let x1=getX(point1);
+			  let x2=getX(point2);
+			  let y1=getY(point1);
+			  let y2=getY(point2);
+			  let d=Math.sqrt((x2−x1)^2+(y2−y1)^2);
+			  return d;
+			  };
+			export {symmetricalPoint,quadrant,distance};
+			// END
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+		points.js
+		// BEGIN
+		export const quadrant = (point) => {
+		  const x = getX(point);
+		  const y = getY(point);
+
+		  if (x > 0 && y > 0) {
+			return 1;
+		  } else if (x < 0 && y > 0) {
+			return 2;
+		  } else if (x < 0 && y < 0) {
+			return 3;
+		  } else if (x > 0 && y < 0) {
+			return 4;
+		  }
+
+		  return null;
+		};
+
+		export const symmetricalPoint = point => makePoint(-getX(point), -getY(point));
+
+		export const distance = (point1, point2) => {
+		  const dX = getX(point2) - getX(point1);
+		  const dY = getY(point2) - getY(point1);
+		  return Math.sqrt((dX ** 2) + (dY ** 2));
+		};
+		// END
+
+
+
+
+_______________________1
+		import { makePoint, getX, getY, toString, quadrant } from 'hexlet-points';
+
+		const point = makePoint(1, -1);
+		console.log(getX(point));
+		console.log(getY(point));
+
+		console.log(point); // don't do it
+		console.log(toString(point));
+		console.log(quadrant(point));
